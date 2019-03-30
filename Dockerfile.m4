@@ -32,10 +32,10 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		gawk \
 		gettext \
 		git \
-		libgeoip-dev \
+		libmaxminddb-dev \
 		libncursesw5-dev \
 		libssl-dev \
-		libtokyocabinet-dev \
+		tzdata \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Build GoAccess
@@ -50,11 +50,11 @@ RUN cd /tmp/goaccess/ \
 	&& ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
-		--enable-geoip \
-		--enable-tcb \
-		--enable-utf8 \
-		--with-getline \
-		--with-openssl \
+		--enable-utf8=yes \
+		--enable-geoip=mmdb \
+		--enable-tcb=no \
+		--with-getline=yes \
+		--with-openssl=yes \
 	&& make -j"$(nproc)" \
 	&& checkinstall --default \
 		--pkgname=goaccess \
@@ -75,10 +75,11 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ca-certificates \
-		libgeoip1 \
+		curl \
+		libmaxminddb0 \
 		libncursesw5 \
 		libssl1.1 \
-		libtokyocabinet9 \
+		tzdata \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install GoAccess from package
