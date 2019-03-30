@@ -1,0 +1,95 @@
+m4_changequote([[, ]])
+
+m4_ifdef([[CROSS_QEMU]], [[
+##################################################
+## "qemu-user-static" stage
+##################################################
+
+FROM ubuntu:18.04 AS qemu-user-static
+RUN export DEBIAN_FRONTEND=noninteractive \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends qemu-user-static
+]])
+
+##################################################
+## "build-goaccess" stage
+##################################################
+
+m4_ifdef([[CROSS_ARCH]], [[FROM CROSS_ARCH/ubuntu:18.04]], [[FROM ubuntu:18.04]]) AS build-goaccess
+m4_ifdef([[CROSS_QEMU]], [[COPY --from=qemu-user-static CROSS_QEMU CROSS_QEMU]])
+
+# Install system packages
+RUN export DEBIAN_FRONTEND=noninteractive \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		autoconf \
+		automake \
+		autopoint \
+		build-essential \
+		ca-certificates \
+		checkinstall \
+		file \
+		gawk \
+		gettext \
+		git \
+		libgeoip-dev \
+		libncursesw5-dev \
+		libssl-dev \
+		libtokyocabinet-dev \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Build GoAccess
+ARG GOACCESS_TREEISH=v1.3
+ARG GOACCESS_REMOTE=https://github.com/allinurl/goaccess.git
+RUN mkdir -p /tmp/goaccess/ && cd /tmp/goaccess/ \
+	&& git clone "${GOACCESS_REMOTE}" ./ \
+	&& git checkout "${GOACCESS_TREEISH}" \
+	&& git submodule update --init --recursive
+RUN cd /tmp/goaccess/ \
+	&& autoreconf -fiv \
+	&& ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--enable-geoip \
+		--enable-tcb \
+		--enable-utf8 \
+		--with-getline \
+		--with-openssl \
+	&& make -j"$(nproc)" \
+	&& checkinstall --default \
+		--pkgname=goaccess \
+		--pkgversion=0 --pkgrelease=0 \
+		--exclude=/usr/include/,/usr/lib/pkgconfig/,/usr/share/man/ --nodoc \
+		make install \
+	&& file /usr/bin/goaccess && /usr/bin/goaccess --version
+
+##################################################
+## "goaccess" stage
+##################################################
+
+m4_ifdef([[CROSS_ARCH]], [[FROM CROSS_ARCH/ubuntu:18.04]], [[FROM ubuntu:18.04]]) AS goaccess
+m4_ifdef([[CROSS_QEMU]], [[COPY --from=qemu-user-static CROSS_QEMU CROSS_QEMU]])
+
+# Install system packages
+RUN export DEBIAN_FRONTEND=noninteractive \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		ca-certificates \
+		libgeoip1 \
+		libncursesw5 \
+		libssl1.1 \
+		libtokyocabinet9 \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Install GoAccess from package
+COPY --from=build-goaccess --chown=root:root /tmp/goaccess/goaccess_*.deb /tmp/
+RUN dpkg -i /tmp/goaccess_*.deb && rm /tmp/goaccess_*.deb
+
+# Copy GoAccess config
+COPY --chown=root:root config/goaccess/ /etc/goaccess/
+
+# WebSocket port
+EXPOSE 7890/tcp
+
+ENTRYPOINT ["/usr/bin/goaccess"]
+CMD ["--config-file=/etc/goaccess/goaccess.conf", "--browsers-file=/etc/goaccess/browsers.list"]
