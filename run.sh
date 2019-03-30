@@ -15,4 +15,4 @@ if ! imageExists "${DOCKER_IMAGE}"; then
 	exit 1
 fi
 
-exec docker run -it --rm "${DOCKER_IMAGE}" "$@"
+exec docker run --tty --interactive --rm "${DOCKER_IMAGE}" "$@"
