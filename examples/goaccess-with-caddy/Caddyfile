@@ -18,9 +18,6 @@
 :7890 {
 	root /var/www/goaccess/
 
-	log / /dev/null
-	errors /dev/null
-
 	rewrite {
 		if {>Upgrade} is websocket
 		to /websocket/
@@ -29,4 +26,7 @@
 	proxy /websocket/ http://goaccess:7890 {
 		websocket
 	}
+
+	log / /dev/null
+	errors /dev/null
 }
