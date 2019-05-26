@@ -68,6 +68,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get install -y --no-install-recommends \
 		ca-certificates \
 		curl \
+		geoipupdate \
 		libmaxminddb0 \
 		libncursesw5 \
 		libssl1.1 \
@@ -80,6 +81,9 @@ RUN dpkg -i /tmp/goaccess_*.deb && rm /tmp/goaccess_*.deb
 
 # Copy GoAccess config
 COPY --chown=root:root config/goaccess/ /etc/goaccess/
+
+# Update GeoIP2 database
+RUN geoipupdate -v
 
 # WebSocket port
 EXPOSE 7890/tcp
