@@ -4,8 +4,8 @@ m4_changequote([[, ]])
 ## "build-goaccess" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM CROSS_ARCH/ubuntu:18.04]], [[FROM ubuntu:18.04]]) AS build-goaccess
-m4_ifdef([[CROSS_QEMU]], [[COPY --from=hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:18.04]], [[FROM docker.io/ubuntu:18.04]]) AS build-goaccess
+m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -56,8 +56,8 @@ RUN cd /tmp/goaccess/ \
 ## "goaccess" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM CROSS_ARCH/ubuntu:18.04]], [[FROM ubuntu:18.04]]) AS goaccess
-m4_ifdef([[CROSS_QEMU]], [[COPY --from=hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:18.04]], [[FROM docker.io/ubuntu:18.04]]) AS goaccess
+m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Environment
 ENV TERM=xterm-256color
