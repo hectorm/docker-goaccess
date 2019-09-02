@@ -3,14 +3,17 @@
 set -eu
 export LC_ALL=C
 
-DOCKER_IMAGE_NAMESPACE=hectormolinero
-DOCKER_IMAGE_NAME=goaccess
-DOCKER_IMAGE_VERSION=latest
-DOCKER_IMAGE=${DOCKER_IMAGE_NAMESPACE}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}
+DOCKER=$(command -v docker 2>/dev/null)
 
-LOG_FILE="$(readlink -f "$1")"
-LOG_FORMAT="${2:-COMBINED}"
+IMAGE_REGISTRY=docker.io
+IMAGE_NAMESPACE=hectormolinero
+IMAGE_PROJECT=goaccess
+IMAGE_TAG=latest
+IMAGE_NAME=${IMAGE_REGISTRY:?}/${IMAGE_NAMESPACE:?}/${IMAGE_PROJECT:?}:${IMAGE_TAG:?}
 
-exec docker run --tty --interactive --rm \
-	--mount type=bind,src="${LOG_FILE}",dst=/access.log,ro \
-	"${DOCKER_IMAGE}" /access.log --log-format="${LOG_FORMAT}"
+LOG_FILE=$(readlink -f "$1")
+LOG_FORMAT=${2:-COMBINED:?}
+
+exec "${DOCKER:?}" run --tty --interactive --rm \
+	--mount type=bind,src="${LOG_FILE:?}",dst=/access.log,ro \
+	"${IMAGE_NAME:?}" /access.log --log-format="${LOG_FORMAT:?}"

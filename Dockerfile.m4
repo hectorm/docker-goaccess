@@ -31,8 +31,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 ARG GOACCESS_TREEISH=v1.3
 ARG GOACCESS_REMOTE=https://github.com/allinurl/goaccess.git
 RUN mkdir -p /tmp/goaccess/ && cd /tmp/goaccess/ \
-	&& git clone "${GOACCESS_REMOTE}" ./ \
-	&& git checkout "${GOACCESS_TREEISH}" \
+	&& git clone "${GOACCESS_REMOTE:?}" ./ \
+	&& git checkout "${GOACCESS_TREEISH:?}" \
 	&& git submodule update --init --recursive
 RUN cd /tmp/goaccess/ \
 	&& autoreconf -fiv \
