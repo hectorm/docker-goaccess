@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   caddy:
-    image: "hectormolinero/caddy:latest"
+    image: "docker.io/hectormolinero/caddy:latest"
     restart: "on-failure:3"
     volumes:
       - "./Caddyfile:/etc/caddy/Caddyfile"
@@ -16,7 +16,7 @@ services:
       - "goaccess"
 
   goaccess:
-    image: "hectormolinero/goaccess:latest"
+    image: "docker.io/hectormolinero/goaccess:latest"
     restart: "on-failure:3"
     volumes:
       - "./goaccess.conf:/etc/goaccess/goaccess.conf"

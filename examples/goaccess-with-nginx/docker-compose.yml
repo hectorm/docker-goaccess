@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   nginx:
-    image: "nginx:latest"
+    image: "docker.io/nginx:latest"
     restart: "on-failure:3"
     volumes:
       - "./nginx.conf:/etc/nginx/nginx.conf"
@@ -24,7 +24,7 @@ services:
       - "goaccess"
 
   goaccess:
-    image: "hectormolinero/goaccess:latest"
+    image: "docker.io/hectormolinero/goaccess:latest"
     restart: "on-failure:3"
     volumes:
       - "./goaccess.conf:/etc/goaccess/goaccess.conf"
