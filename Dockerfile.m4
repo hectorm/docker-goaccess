@@ -1,10 +1,10 @@
 m4_changequote([[, ]])
 
 ##################################################
-## "build-goaccess" stage
+## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:18.04]], [[FROM docker.io/ubuntu:18.04]]) AS build-goaccess
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:18.04]], [[FROM docker.io/ubuntu:18.04]]) AS build
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectormolinero/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -24,33 +24,33 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libmaxminddb-dev \
 		libncursesw5-dev \
 		libssl-dev \
-		tzdata \
-	&& rm -rf /var/lib/apt/lists/*
+		tzdata
 
 # Build GoAccess
 ARG GOACCESS_TREEISH=v1.3
 ARG GOACCESS_REMOTE=https://github.com/allinurl/goaccess.git
-RUN mkdir -p /tmp/goaccess/ && cd /tmp/goaccess/ \
-	&& git clone "${GOACCESS_REMOTE:?}" ./ \
-	&& git checkout "${GOACCESS_TREEISH:?}" \
-	&& git submodule update --init --recursive
-RUN cd /tmp/goaccess/ \
-	&& autoreconf -fiv \
-	&& ./configure \
+RUN mkdir /tmp/goaccess/
+WORKDIR /tmp/goaccess/
+RUN git clone "${GOACCESS_REMOTE:?}" ./
+RUN git checkout "${GOACCESS_TREEISH:?}"
+RUN git submodule update --init --recursive
+RUN autoreconf -fiv
+RUN ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--enable-utf8=yes \
 		--enable-geoip=mmdb \
 		--enable-tcb=no \
 		--with-getline=yes \
-		--with-openssl=yes \
-	&& make -j"$(nproc)" \
-	&& checkinstall --default \
+		--with-openssl=yes
+RUN make -j"$(nproc)"
+RUN checkinstall --default \
 		--pkgname=goaccess \
 		--pkgversion=0 --pkgrelease=0 \
 		--exclude=/usr/include/,/usr/lib/pkgconfig/,/usr/share/man/ --nodoc \
-		make install \
-	&& file /usr/bin/goaccess && /usr/bin/goaccess --version
+		make install
+RUN file /usr/bin/goaccess
+RUN /usr/bin/goaccess --version
 
 ##################################################
 ## "goaccess" stage
@@ -76,7 +76,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install GoAccess from package
-COPY --from=build-goaccess --chown=root:root /tmp/goaccess/goaccess_*.deb /tmp/
+COPY --from=build --chown=root:root /tmp/goaccess/goaccess_*.deb /tmp/
 RUN dpkg -i /tmp/goaccess_*.deb && rm /tmp/goaccess_*.deb
 
 # Copy GoAccess config
