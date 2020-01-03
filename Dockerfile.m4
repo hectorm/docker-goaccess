@@ -68,7 +68,6 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get install -y --no-install-recommends \
 		ca-certificates \
 		curl \
-		geoipupdate \
 		libmaxminddb0 \
 		libncursesw5 \
 		libssl1.1 \
@@ -82,8 +81,12 @@ RUN dpkg -i /tmp/goaccess_*.deb && rm /tmp/goaccess_*.deb
 # Copy GoAccess config
 COPY --chown=root:root config/goaccess/ /etc/goaccess/
 
-# Update GeoIP2 database
-RUN geoipupdate -v
+# Download GeoIP2 database
+RUN mkdir -p /var/lib/GeoIP/
+RUN GEOIP2_DB_PAGE_URL='https://db-ip.com/db/download/ip-to-city-lite' \
+	GEOIP2_DB_PAGE_REGEX='https://download\.db-ip\.com/free/dbip-city-lite-[0-9]{4}-[0-9]{2}\.mmdb\.gz' \
+	GEOIP2_DB_URL=$(curl -fsSL "${GEOIP2_DB_PAGE_URL:?}" | grep -Eo "${GEOIP2_DB_PAGE_REGEX:?}") \
+	&& curl -L "${GEOIP2_DB_URL:?}" | gunzip > /var/lib/GeoIP/GeoLite2-City.mmdb
 
 # WebSocket port
 EXPOSE 7890/tcp
