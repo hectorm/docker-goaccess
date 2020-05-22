@@ -27,7 +27,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		tzdata
 
 # Build GoAccess
-ARG GOACCESS_TREEISH=v1.3
+ARG GOACCESS_TREEISH=v1.4
 ARG GOACCESS_REMOTE=https://github.com/allinurl/goaccess.git
 RUN mkdir /tmp/goaccess/
 WORKDIR /tmp/goaccess/
@@ -40,7 +40,6 @@ RUN ./configure \
 		--sysconfdir=/etc \
 		--enable-utf8=yes \
 		--enable-geoip=mmdb \
-		--enable-tcb=no \
 		--with-getline=yes \
 		--with-openssl=yes
 RUN make -j"$(nproc)"
@@ -76,20 +75,19 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 
 # Install GoAccess from package
 COPY --from=build --chown=root:root /tmp/goaccess/goaccess_*.deb /tmp/
-RUN dpkg -i /tmp/goaccess_*.deb && rm /tmp/goaccess_*.deb
+RUN dpkg -i /tmp/goaccess_*.deb && rm -f /tmp/goaccess_*.deb
 
 # Copy GoAccess config
-COPY --chown=root:root config/goaccess/ /etc/goaccess/
+COPY --chown=root:root ./config/goaccess/ /etc/goaccess/
 
 # Download GeoIP2 database
-RUN mkdir -p /var/lib/GeoIP/
 RUN GEOIP2_DB_PAGE_URL='https://db-ip.com/db/download/ip-to-city-lite' \
 	GEOIP2_DB_PAGE_REGEX='https://download\.db-ip\.com/free/dbip-city-lite-[0-9]{4}-[0-9]{2}\.mmdb\.gz' \
 	GEOIP2_DB_URL=$(curl -fsSL "${GEOIP2_DB_PAGE_URL:?}" | grep -Eo "${GEOIP2_DB_PAGE_REGEX:?}") \
-	&& curl -L "${GEOIP2_DB_URL:?}" | gunzip > /var/lib/GeoIP/GeoLite2-City.mmdb
+	&& mkdir /var/lib/GeoIP/ && curl -L "${GEOIP2_DB_URL:?}" | gunzip > /var/lib/GeoIP/GeoLite2-City.mmdb
 
 # WebSocket port
 EXPOSE 7890/tcp
 
 ENTRYPOINT ["/usr/bin/goaccess"]
-CMD ["--config-file=/etc/goaccess/goaccess.conf", "--browsers-file=/etc/goaccess/browsers.list"]
+CMD ["--config-file=/etc/goaccess/goaccess.conf", "--browsers-file=/etc/goaccess/browsers.list", "--geoip-database=/var/lib/GeoIP/GeoLite2-City.mmdb"]

@@ -1,5 +1,6 @@
 # List of browsers and their categories
 # e.g., WORD delimited by tab(s) TYPE
+# TYPE can be any type and it's not limited to the ones below.
 #
 # **IMPORTANT NOTE**:
 # ---------------------
@@ -88,6 +89,8 @@ PxBroker										Crawlers
 Seekport										Crawlers
 adscanner										Crawlers
 AfD-Verbotsverfahren_JETZT!	Crawlers
+DuckDuckGo-favicons-Bot									Crawlers
+bingbot											Crawlers
 
 Vienna											Feeds
 Windows-RSS-Platform				Feeds
