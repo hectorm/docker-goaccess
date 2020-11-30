@@ -1,32 +1,25 @@
 :80 {
-	root /var/www/html/
+	root * /var/www/html/
+	file_server * browse
 
-	log / /var/log/caddy/access.log {combined} {
-		rotate_size 100
-		rotate_age 180
-		rotate_keep 10
-		rotate_compress
-	}
-	errors /var/log/caddy/error.log {
-		rotate_size 100
-		rotate_age 180
-		rotate_keep 10
-		rotate_compress
+	log {
+		output file /var/log/caddy/access.log
+		format formatted "{common_log} \"{request>headers>Referer>[0]}\" \"{request>headers>User-Agent>[0]}\""
 	}
 }
 
 :7890 {
-	root /var/www/goaccess/
+	root * /var/www/goaccess/
+	file_server * browse
 
-	rewrite {
-		if {>Upgrade} is websocket
-		to /websocket/
+	@websockets {
+		header Connection *Upgrade*
+		header Upgrade websocket
 	}
+	reverse_proxy @websockets goaccess:7890
 
-	proxy /websocket/ http://goaccess:7890 {
-		websocket
+	log {
+		output discard
+		format console
 	}
-
-	log / /dev/null
-	errors /dev/null
 }

@@ -3,25 +3,32 @@ version: "3.7"
 services:
 
   caddy:
-    image: "docker.io/hectormolinero/caddy:latest"
+    image: "docker.io/hectormolinero/caddy2:latest"
     restart: "on-failure:3"
     volumes:
-      - "./Caddyfile:/etc/caddy/Caddyfile"
-      - "www:/var/www/goaccess:ro"
-      - "log:/var/log/caddy"
+      - "./Caddyfile:/etc/caddy/Caddyfile:ro"
+      - "www:/var/www/goaccess/:ro"
+      - "log:/var/log/caddy/"
     ports:
       - "0.0.0.0:8080:80/tcp"
       - "127.0.0.1:7890:7890/tcp"
-    depends_on:
-      - "goaccess"
+    entrypoint: "/bin/sh"
+    command: |
+      -euc "
+        rm -f /var/log/caddy/access.log
+        touch /var/log/caddy/access.log
+        exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+      "
 
   goaccess:
     image: "docker.io/hectormolinero/goaccess:latest"
     restart: "on-failure:3"
     volumes:
-      - "./goaccess.conf:/etc/goaccess/goaccess.conf"
-      - "www:/var/www/goaccess"
-      - "log:/var/log/caddy:ro"
+      - "./goaccess.conf:/etc/goaccess/goaccess.conf:ro"
+      - "www:/var/www/goaccess/"
+      - "log:/var/log/caddy/:ro"
+    depends_on:
+      - "caddy"
 
 volumes:
 

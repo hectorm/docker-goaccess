@@ -3,33 +3,32 @@ version: "3.7"
 services:
 
   nginx:
-    image: "docker.io/nginx:latest"
+    image: "docker.io/nginx:1"
     restart: "on-failure:3"
     volumes:
-      - "./nginx.conf:/etc/nginx/nginx.conf"
-      - "www:/var/www/goaccess:ro"
-      - "log:/var/log/nginx"
+      - "./nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "www:/var/www/goaccess/:ro"
+      - "log:/var/log/nginx/"
     ports:
       - "0.0.0.0:8080:80/tcp"
       - "127.0.0.1:7890:7890/tcp"
-    # WARNING: log rotation is not configured.
     entrypoint: "/bin/sh"
     command: |
-      -eu -c "
-        cd /var/log/nginx
-        unlink ./access.log; touch ./access.log
-        unlink ./error.log; touch ./error.log
-        exec nginx"
-    depends_on:
-      - "goaccess"
+      -euc "
+        rm -f /var/log/nginx/access.log
+        touch /var/log/nginx/access.log
+        exec /docker-entrypoint.sh nginx
+      "
 
   goaccess:
     image: "docker.io/hectormolinero/goaccess:latest"
     restart: "on-failure:3"
     volumes:
-      - "./goaccess.conf:/etc/goaccess/goaccess.conf"
-      - "www:/var/www/goaccess"
-      - "log:/var/log/nginx:ro"
+      - "./goaccess.conf:/etc/goaccess/goaccess.conf:ro"
+      - "www:/var/www/goaccess/"
+      - "log:/var/log/nginx/:ro"
+    depends_on:
+      - "nginx"
 
 volumes:
 

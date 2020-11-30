@@ -11,9 +11,8 @@ IMAGE_PROJECT=goaccess
 IMAGE_TAG=latest
 IMAGE_NAME=${IMAGE_REGISTRY:?}/${IMAGE_NAMESPACE:?}/${IMAGE_PROJECT:?}:${IMAGE_TAG:?}
 
-LOG_FILE=$(readlink -f "$1")
-LOG_FORMAT=${2:-COMBINED:?}
+LOG_FILE=$(readlink -f -- "${1:?}"); shift 1
 
-exec "${DOCKER:?}" run --rm \
+exec "${DOCKER:?}" run --rm --log-driver none \
 	--mount type=bind,src="${LOG_FILE:?}",dst=/access.log,ro \
-	"${IMAGE_NAME:?}" /access.log --log-format="${LOG_FORMAT:?}"
+	"${IMAGE_NAME:?}" /access.log "${@}"
