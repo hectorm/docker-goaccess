@@ -7,41 +7,41 @@
 AntennaPod				Podcasts
 AppleCoreMedia			Mediaplayer
 atc						Podcasts
-BacklinkCrawler		Crawlers
+BacklinkCrawler			Crawlers
 Baiduspider				Crawlers
-Bullhorn Server		PodCrawlers
+Bullhorn Server			PodCrawlers
 Castbox					Podcasts
 CastBox					Podcasts
 Castro					Podcasts
-CCBot						Crawlers
-com.evolve.podcast	Podcasts
+CCBot					Crawlers
+com.evolve.podcast		Podcasts
 cortex					Facebook
 ExoPlayerLib			Mediaplayer
-facebookexternalhit	Facebook
+facebookexternalhit		Facebook
 fyyd image poller		PodCrawlers
 fyyd-poll				PodCrawlers
-icatcher					Podcasts
+icatcher				Podcasts
 iCatcher!				Podcasts
-iTMS						PodCrawlers
+iTMS					PodCrawlers
 itunesstored			PodCrawlers
-Kodi						Mediaplayer
-Lavf						Mediaplayer
+Kodi					Mediaplayer
+Lavf					Mediaplayer
 LCC						Crawlers
-Luminary					Podcasts
-Mediatoolkitbot		Crawlers
+Luminary				Podcasts
+Mediatoolkitbot			Crawlers
 mindUpBot				Crawlers
 msnbot					Crawlers
-NSPlayer					Mediaplayer
-Overcast					Podcasts
+NSPlayer				Mediaplayer
+Overcast				Podcasts
 Photon					Crawlers
 Player FM				Podcasts
-PlayerFM					Podcasts
-Plex						Mediaplayer
+PlayerFM				Podcasts
+Plex					Mediaplayer
 Podbean					Podcasts
 podcast					Podcasts
 Podcast					Podcasts
-PodcastRepublic		Podcasts
-Podcasts					Podcasts
+PodcastRepublic			Podcasts
+Podcasts				Podcasts
 Podchaser				PodCrawlers
 Podchaser-Parser		PodCrawlers
 Podnews.net				PodCrawlers
@@ -50,15 +50,15 @@ Procast					Podcasts
 ProCast					Podcasts
 Procast (iOS)			Podcasts
 ProcastProCast			Podcasts
-radio.at					PodCrawlers
+radio.at				PodCrawlers
 RadioPublic				PodCrawlers
 RadioPublicImageResizer	PodCrawlers
-RSSRadio					Podcasts
-Sonos						Mediaplayer
+RSSRadio				Podcasts
+Sonos					Mediaplayer
 Spotify					PodCrawlers
 stagefright				Mediaplayer
-Stitcher					PodCrawlers
-UniversalFeedParser	Feeds
+Stitcher				PodCrawlers
+UniversalFeedParser		Feeds
 WinampMPEG				Mediaplayer
-XING FeedReader		Feeds
+XING FeedReader			Feeds
 XING-contenttabreceiver	Feeds

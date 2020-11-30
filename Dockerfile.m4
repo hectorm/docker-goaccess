@@ -27,7 +27,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		tzdata
 
 # Build GoAccess
-ARG GOACCESS_TREEISH=v1.4
+ARG GOACCESS_TREEISH=v1.4.2
 ARG GOACCESS_REMOTE=https://github.com/allinurl/goaccess.git
 RUN mkdir /tmp/goaccess/
 WORKDIR /tmp/goaccess/
