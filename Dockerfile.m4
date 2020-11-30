@@ -80,6 +80,9 @@ RUN dpkg -i /tmp/goaccess_*.deb && rm -f /tmp/goaccess_*.deb
 # Copy GoAccess config
 COPY --chown=root:root ./config/goaccess/ /etc/goaccess/
 
+# Create data directory
+RUN mkdir /var/lib/goaccess/
+
 # Download GeoIP2 database
 RUN GEOIP2_DB_PAGE_URL='https://db-ip.com/db/download/ip-to-city-lite' \
 	GEOIP2_DB_PAGE_REGEX='https://download\.db-ip\.com/free/dbip-city-lite-[0-9]{4}-[0-9]{2}\.mmdb\.gz' \
@@ -90,4 +93,9 @@ RUN GEOIP2_DB_PAGE_URL='https://db-ip.com/db/download/ip-to-city-lite' \
 EXPOSE 7890/tcp
 
 ENTRYPOINT ["/usr/bin/goaccess"]
-CMD ["--config-file=/etc/goaccess/goaccess.conf", "--browsers-file=/etc/goaccess/browsers.list", "--geoip-database=/var/lib/GeoIP/GeoLite2-City.mmdb"]
+CMD [ \
+	"--config-file=/etc/goaccess/goaccess.conf", \
+	"--browsers-file=/etc/goaccess/browsers.list", \
+	"--geoip-database=/var/lib/GeoIP/GeoLite2-City.mmdb", \
+	"--db-path=/var/lib/goaccess/", "--persist", "--restore" \
+]
