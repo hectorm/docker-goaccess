@@ -79,6 +79,8 @@ RUN dpkg -i /tmp/goaccess_*.deb && rm -f /tmp/goaccess_*.deb
 
 # Copy GoAccess config
 COPY --chown=root:root ./config/goaccess/ /etc/goaccess/
+RUN find /etc/goaccess/ -type d -not -perm 0755 -exec chmod 0755 '{}' ';'
+RUN find /etc/goaccess/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
 
 # Create data directory
 RUN mkdir /var/lib/goaccess/
