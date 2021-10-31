@@ -14,7 +14,7 @@ IMAGE_NAME=${IMAGE_REGISTRY:?}/${IMAGE_NAMESPACE:?}/${IMAGE_PROJECT:?}:${IMAGE_T
 imageExists() { [ -n "$("${DOCKER:?}" images -q "${1:?}")" ]; }
 
 if ! imageExists "${IMAGE_NAME:?}" && ! imageExists "${IMAGE_NAME#docker.io/}"; then
-	>&2 printf -- '%s\n' "\"${IMAGE_NAME:?}\" image doesn't exist!"
+	>&2 printf '%s\n' "\"${IMAGE_NAME:?}\" image doesn't exist!"
 	exit 1
 fi
 
