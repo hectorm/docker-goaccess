@@ -24,7 +24,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		libmaxminddb-dev \
 		libncurses-dev \
 		libssl-dev \
-		tzdata
+		tzdata \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Build GoAccess
 ARG GOACCESS_TREEISH=v1.5.4
