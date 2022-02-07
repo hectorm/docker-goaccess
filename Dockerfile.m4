@@ -28,7 +28,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Build GoAccess
-ARG GOACCESS_TREEISH=v1.5.4
+ARG GOACCESS_TREEISH=v1.5.5
 ARG GOACCESS_REMOTE=https://github.com/allinurl/goaccess.git
 RUN mkdir /tmp/goaccess/
 WORKDIR /tmp/goaccess/
