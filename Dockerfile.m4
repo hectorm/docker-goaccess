@@ -75,8 +75,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install GoAccess from package
-COPY --from=build --chown=root:root /tmp/goaccess/goaccess_*.deb /tmp/
-RUN dpkg -i /tmp/goaccess_*.deb && rm -f /tmp/goaccess_*.deb
+RUN --mount=type=bind,from=build,source=/tmp/goaccess/,target=/tmp/goaccess/ dpkg -i /tmp/goaccess/goaccess_*.deb
 
 # Copy GoAccess config
 COPY --chown=root:root ./config/goaccess/ /etc/goaccess/
