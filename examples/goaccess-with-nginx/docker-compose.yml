@@ -15,7 +15,7 @@ services:
     entrypoint: "/bin/sh"
     command: |
       -euc "
-        rm -f /var/log/nginx/access.log
+        [ ! -L /var/log/nginx/access.log ] || rm -f /var/log/nginx/access.log
         touch /var/log/nginx/access.log
         exec /docker-entrypoint.sh nginx
       "

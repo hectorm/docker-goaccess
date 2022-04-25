@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   caddy:
-    image: "docker.io/hectormolinero/caddy2:latest"
+    image: "docker.io/hectorm/caddy:latest"
     restart: "on-failure:3"
     volumes:
       - "./Caddyfile:/etc/caddy/Caddyfile:ro"
@@ -15,7 +15,6 @@ services:
     entrypoint: "/bin/sh"
     command: |
       -euc "
-        rm -f /var/log/caddy/access.log
         touch /var/log/caddy/access.log
         exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
       "
