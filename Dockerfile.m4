@@ -4,7 +4,7 @@ m4_changequote([[, ]])
 ## "build" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS build
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS build
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Install system packages
@@ -56,7 +56,7 @@ RUN /usr/bin/goaccess --version
 ## "goaccess" stage
 ##################################################
 
-m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:20.04]], [[FROM docker.io/ubuntu:20.04]]) AS goaccess
+m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS main
 m4_ifdef([[CROSS_QEMU]], [[COPY --from=docker.io/hectorm/qemu-user-static:latest CROSS_QEMU CROSS_QEMU]])
 
 # Environment
@@ -70,7 +70,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		curl \
 		libmaxminddb0 \
 		libncursesw6 \
-		libssl1.1 \
+		libssl3 \
 		tzdata \
 	&& rm -rf /var/lib/apt/lists/*
 
