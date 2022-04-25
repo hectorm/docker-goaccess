@@ -21,7 +21,7 @@ services:
       "
 
   goaccess:
-    image: "docker.io/hectormolinero/goaccess:latest"
+    image: "docker.io/hectorm/goaccess:latest"
     restart: "on-failure:3"
     volumes:
       - "./goaccess.conf:/etc/goaccess/goaccess.conf:ro"
