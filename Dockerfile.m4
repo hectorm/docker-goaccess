@@ -28,7 +28,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Build GoAccess
-ARG GOACCESS_TREEISH=v1.6.2
+ARG GOACCESS_TREEISH=v1.6.3
 ARG GOACCESS_REMOTE=https://github.com/allinurl/goaccess.git
 RUN mkdir /tmp/goaccess/
 WORKDIR /tmp/goaccess/
@@ -53,7 +53,7 @@ RUN file /usr/bin/goaccess
 RUN /usr/bin/goaccess --version
 
 ##################################################
-## "goaccess" stage
+## "main" stage
 ##################################################
 
 m4_ifdef([[CROSS_ARCH]], [[FROM docker.io/CROSS_ARCH/ubuntu:22.04]], [[FROM docker.io/ubuntu:22.04]]) AS main
