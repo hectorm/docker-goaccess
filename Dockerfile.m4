@@ -86,10 +86,12 @@ RUN find /etc/goaccess/ -type f -not -perm 0644 -exec chmod 0644 '{}' ';'
 RUN mkdir /var/lib/goaccess/
 
 # Download GeoIP2 database
-RUN GEOIP2_DB_PAGE_URL='https://db-ip.com/db/download/ip-to-city-lite' \
-	GEOIP2_DB_PAGE_REGEX='https://download\.db-ip\.com/free/dbip-city-lite-[0-9]{4}-[0-9]{2}\.mmdb\.gz' \
-	GEOIP2_DB_URL=$(curl -fsSL "${GEOIP2_DB_PAGE_URL:?}" | grep -Eo "${GEOIP2_DB_PAGE_REGEX:?}") \
-	&& mkdir /var/lib/GeoIP/ && curl -L "${GEOIP2_DB_URL:?}" | gunzip > /var/lib/GeoIP/GeoLite2-City.mmdb
+RUN GEOIP2_DB_PAGE=$(curl -fsSL 'https://db-ip.com/db/download/ip-to-city-lite') \
+	GEOIP2_DB_URL=$(printf '%s' "${GEOIP2_DB_PAGE:?}" | sed -n '/<dd>MMDB<\/dd>/,${s/.\{1,\}\(https:\/\/.\{1,\}\/dbip-city-lite-[0-9]\{4\}-[0-9]\{2\}\.mmdb\.gz\).\{1,\}/\1/p}' | head -1) \
+	GEOIP2_DB_CHECKSUM=$(printf '%s' "${GEOIP2_DB_PAGE:?}" | sed -n '/<dd>MMDB<\/dd>/,${s/.\{1,\}\([a-fA-F0-9]\{40\}\).\{1,\}/\1/p}' | head -1) \
+	&& mkdir /usr/share/GeoIP/ \
+	&& curl -L "${GEOIP2_DB_URL:?}" | gunzip > /usr/share/GeoIP/dbip-city-lite.mmdb \
+	&& printf '%s' "${GEOIP2_DB_CHECKSUM:?}  /usr/share/GeoIP/dbip-city-lite.mmdb" | sha1sum -c
 
 # WebSocket port
 EXPOSE 7890/tcp
@@ -98,6 +100,6 @@ ENTRYPOINT ["/usr/bin/goaccess"]
 CMD [ \
 	"--config-file=/etc/goaccess/goaccess.conf", \
 	"--browsers-file=/etc/goaccess/browsers.list", \
-	"--geoip-database=/var/lib/GeoIP/GeoLite2-City.mmdb", \
+	"--geoip-database=/usr/share/GeoIP/dbip-city-lite.mmdb", \
 	"--db-path=/var/lib/goaccess/", "--persist", "--restore" \
 ]
