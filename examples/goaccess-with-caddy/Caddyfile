@@ -2,7 +2,7 @@
 	log all {
       include http.log.access.all
       output file /var/log/caddy/access.log
-      format transform `{request>host}:443 {request>headers>X-Forwarded-For>[0]:request>headers>Cf-Connecting-Ip>[0]:request>remote_ip} - {request>user_id} [{ts}] "{request>method} {request>uri} {request>proto}" {status} {size} "{request>headers>Referer>[0]}" "{request>headers>User-Agent>[0]}"` {
+      format transform `{request>host}:443 {request>remote_ip} - {request>user_id} [{ts}] "{request>method} {request>uri} {request>proto}" {status} {size} "{request>headers>Referer>[0]}" "{request>headers>User-Agent>[0]}"` {
         time_format "02/Jan/2006:15:04:05 -0700"
       }
 	}
