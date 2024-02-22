@@ -1,16 +1,30 @@
-:80 {
-	root * /var/www/html/
-	file_server * browse
-
-	log {
+{
+	log main {
+		include http.log.access.main
 		output file /var/log/caddy/access.log
-		format transform `{request>remote_ip} - {request>user_id} [{ts}] "{request>method} {request>uri} {request>proto}" {status} {size} "{request>headers>Referer>[0]}" "{request>headers>User-Agent>[0]}"` {
+		format transform `{request>host}: {request>remote_ip} - {request>user_id} [{ts}] "{request>method} {request>uri} {request>proto}" {status} {size} "{request>headers>Referer>[0]}" "{request>headers>User-Agent>[0]}"` {
 			time_format "02/Jan/2006:15:04:05 -0700"
 		}
 	}
+
+	log none {
+		include http.log.access.none
+		output discard
+		format console
+	}
+}
+
+:80 {
+	# You have to place this in every route you want to add logs
+	log main
+
+	root * /var/www/html/
+	file_server * browse
 }
 
 :7890 {
+	log none
+
 	root * /var/www/goaccess/
 	file_server * browse
 
@@ -19,9 +33,4 @@
 		header Upgrade websocket
 	}
 	reverse_proxy @websockets goaccess:7890
-
-	log {
-		output discard
-		format console
-	}
 }
