@@ -1,17 +1,15 @@
-version: "3.9"
-
 services:
 
   caddy:
     image: "docker.io/hectorm/caddy:latest"
     restart: "on-failure:3"
+    ports:
+      - "8080:80/tcp"
+      - "127.0.0.1:7890:7890/tcp"
     volumes:
       - "./Caddyfile:/etc/caddy/Caddyfile:ro"
       - "www:/var/www/goaccess/:ro"
       - "log:/var/log/caddy/"
-    ports:
-      - "0.0.0.0:8080:80/tcp"
-      - "127.0.0.1:7890:7890/tcp"
     entrypoint: "/bin/sh"
     command: |
       -euc "
