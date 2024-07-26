@@ -68,7 +68,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 		curl \
 		libmaxminddb0 \
 		libncursesw6 \
-		libssl3 \
+		libssl3t64 \
 		tzdata \
 	&& rm -rf /var/lib/apt/lists/*
 
